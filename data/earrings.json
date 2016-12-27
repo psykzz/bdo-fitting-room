@@ -1,0 +1,4 @@
+{
+    "bluecoral": { "name": "Blue Coral", "img": null, "lvl1": {"ap":0, "dp":10}},
+    "redcoral": { "name": "Red Coral", "img": null, "lvl1": {"ap":0, "dp":10}}
+}

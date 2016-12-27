@@ -17,7 +17,7 @@
         weapons: {
             offhand:  { name: null, img: null, ap: 0, dp: 0 },
             awaken:  { name: null, img: null, ap: 0, dp: 0 },
-            main:  { name: null, img: null, ap: 0, dp: 0 },
+            weapon:  { name: null, img: null, ap: 0, dp: 0 },
         },
         accessories: {
             ring1:  { name: null, img: null, ap: 0, dp: 0 },
@@ -28,10 +28,6 @@
     };
 
     /* internal functions */
-    String.prototype.capitalize = String.prototype.capitalize || function capitalize() {
-        return this.charAt(0).toUpperCase() + this.slice(1);
-    }
-
     function calculateAP() {
         var armor_ap = Object.values(bdo.equippedItems.armor).reduce(function(a,b) {
             return a + b.ap;
@@ -72,40 +68,52 @@
     /* public functions */
     bdo.loadItems = function loadItems() {
         // return some debug items
-        return {
-            head: {grunil: { lvl1: {name: null, img: null, ap:0, dp:10}}},
-            chest: {grunil: { lvl1: {name: 'grunil', img: null, ap:0, dp:10}}},
-            gloves: {grunil: { lvl1: {name: null, img: null, ap:0, dp:10}}},
-            shoes: {grunil: { lvl1: {name: null, img: null, ap:0, dp:10}}},
-            ring1: {grunil: { lvl1: {name: null, img: null, ap:0, dp:10}}},
-            ring2: {grunil: { lvl1: {name: null, img: null, ap:0, dp:10}}},
-            earring1: {grunil: { lvl1: {name: null, img: null, ap:0, dp:10}}},
-            earring2: {grunil: { lvl1: {name: null, img: null, ap:0, dp:10}}},
-            neck: {grunil: { lvl1: {name: null, img: null, ap:0, dp:10}}},
-            waist: {grunil: { lvl1: {name: null, img: null, ap:0, dp:10}}},
-            weapon: {liverto: { lvl1: {name: null, img: null, ap:10, dp:0}}},
-            offhand: {yuria: { lvl1: {name: null, img: null, ap:4, dp:0}}},
-            awaken: {default: { lvl1: {name: null, img: null, ap:10, dp:0}}},
-        }
+        console.log('hello?');
+        $.when(
+            $.getJSON('data/head.json'),
+            $.getJSON('data/chest.json'),
+            $.getJSON('data/gloves.json'),
+            $.getJSON('data/shoes.json'),
+            $.getJSON('data/rings.json'),
+            $.getJSON('data/earrings.json'),
+            $.getJSON('data/neck.json'),
+            $.getJSON('data/waist.json'),
+            $.getJSON('data/weapons.json'),
+            $.getJSON('data/offhand.json'),
+            $.getJSON('data/awakened.json')
+        ).done(function(_head, _chest, _gloves, _shoes, _rings, _earrings,
+            _neck, _waist, _weapon, _offhand, _awaken) {
 
-        return {
-            head: $.getJSON('data/head.json'),
-            head: $.getJSON('data/head.json'),
-            head: $.getJSON('data/head.json'),
-            head: $.getJSON('data/head.json'),
-            head: $.getJSON('data/head.json'),
-            head: $.getJSON('data/head.json')
-        }
+            // if any of the json files are not valid this won't run and we wont get any warnings
+
+            bdo.all_items = {
+                head: _head[0],
+                chest: _chest[0],
+                gloves: _gloves[0],
+                shoes: _shoes[0],
+                ring1: _rings[0],
+                ring2: _rings[0],
+                earring1: _earrings[0],
+                earring2: _earrings[0],
+                neck: _neck[0],
+                waist: _waist[0],
+                weapon: _weapon[0],
+                offhand: _offhand[0],
+                awaken: _awaken[0],
+            }
+            bdo.updateItems(bdo.all_items);
+
+        });
     };
 
     bdo.updateItems = function updateItems(items) {
 
-        var slots = ['head', 'chest'];
+        var slots = ['head', 'chest', 'ring1', 'ring2', 'waist', 'neck', 'offhand', 'awaken', 'weapon', 'gloves', 'earring1', 'earring2'];
         $.each(slots, function(i, slot) {
             $.each(Object.keys(items[slot]), function (i, item) {
                 $(`select[name=${slot}]`).append($('<option>', {
                     value: item,
-                    text : item.capitalize()
+                    text : items[slot][item].name
                 }));
             });
         });
@@ -143,22 +151,26 @@
     // selecting a slot
     $('.character-items .slot').on('click', function() {
         var itemType = $(this).attr("class").split(' ')[1];
-        itemType = itemType.substring(5)
+        itemType = itemType.substring(5); // remove the "slot-" part
         $('.character-equipment').children().hide();
         $(`.character-equipment .${itemType}`).show();
     });
-    // updating an item name
+
+    // updating an item
     $('.character-equipment select').on('change', function() {
         var slot = $(this).parent().attr('class');
         var itemName = $(`.character-equipment select[name="${slot}"]`).find(":selected").val();
         var itemLevel = $(`.character-equipment select[name="${slot}-level"]`).find(":selected").val();
         console.log(slot, itemName, itemLevel);
-        bdo.equipItem(slot, itemName, itemLevel);
+        try {
+            bdo.equipItem(slot, itemName, itemLevel);
+        } catch(err) {
+            setTimeout(function() { alert('Invalid selection, data might be missing'); }, 1);
+        }
     });
-    //updating an item level
 
-    bdo.all_items = bdo.loadItems();
-    bdo.updateItems(bdo.all_items);
+    /* start init */
+    bdo.loadItems();
     bdo.loadFitting();
     bdo.updateStats();
     window.bdo = bdo;

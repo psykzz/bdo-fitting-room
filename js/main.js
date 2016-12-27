@@ -1,7 +1,9 @@
-;(function (window, document) {
+;(function (window, document, $) {
     'use strict';
 
     var bdo = window.bdo || {};
+
+    var emptyItem = `<option selected="selected" value="none">-- None --</option>`;
 
     bdo.equippedItems = {
         armor: {
@@ -26,18 +28,6 @@
     };
 
     /* internal functions */
-    function loadJSON(url, callback) {
-        var xobj = new XMLHttpRequest();
-            xobj.overrideMimeType("application/json");
-        xobj.open('GET', url, true);
-        xobj.onreadystatechange = function () {
-            if (xobj.readyState == 4 && xobj.status == "200") {
-                callback(xobj.responseText);
-            }
-        };
-        xobj.send(null);
-     }
-
     function calculateAP() {
         var armor_ap = Object.values(bdo.equippedItems.armor).reduce(function(a,b) {
             return a + b.ap;
@@ -92,12 +82,12 @@
         }
 
         return {
-            head: loadJSON('data/head.json'),
-            head: loadJSON('data/head.json'),
-            head: loadJSON('data/head.json'),
-            head: loadJSON('data/head.json'),
-            head: loadJSON('data/head.json'),
-            head: loadJSON('data/head.json')
+            head: $.getJSON('data/head.json'),
+            head: $.getJSON('data/head.json'),
+            head: $.getJSON('data/head.json'),
+            head: $.getJSON('data/head.json'),
+            head: $.getJSON('data/head.json'),
+            head: $.getJSON('data/head.json')
         }
     };
 
@@ -120,10 +110,19 @@
         console.log(`Fitting Hash: ${fittingHash}`);
     }
 
+    /* Add event handlers */
+
+    $('.character-items .slot').on('click', function() {
+        var itemType = $(this).attr("class").split(' ')[1];
+        itemType = itemType.substring(5)
+        $('.character-equipment').children().hide();
+        $(`.character-equipment .${itemType}`).show();
+    });
+
     var all_items = bdo.loadItems();
 
     bdo.loadFitting();
     bdo.updateStats();
     window.bdo = bdo;
 
-})(window, document)
+})(window, document, jQuery)

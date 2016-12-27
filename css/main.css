@@ -11,9 +11,10 @@ body {
     width:1024px;
 }
 .character-panel {
-    position: absolute;
+    position: relative;
     width: 360px;
     height: 480px;
+    float: left;
 }
 .character-items .background {
     position: absolute;
@@ -132,4 +133,14 @@ body {
 .character-stats .stat-dp {
     position: absolute;
     left: 270px;
+}
+
+
+.character-equipment {
+    float: left;
+    padding-left: 5px;
+    width: 400px;
+}
+.character-equipment > div {
+    display: none;
 }

@@ -8,7 +8,7 @@
     bdo.equippedItems = {
         armor: {
             head: { name: null, img: null, ap: 0, dp: 0 },
-            chset:  { name: null, img: null, ap: 0, dp: 0 },
+            chest:  { name: null, img: null, ap: 0, dp: 0 },
             gloves:  { name: null, img: null, ap: 0, dp: 0 },
             neck:  { name: null, img: null, ap: 0, dp: 0 },
             waist:  { name: null, img: null, ap: 0, dp: 0 },
@@ -28,6 +28,10 @@
     };
 
     /* internal functions */
+    String.prototype.capitalize = String.prototype.capitalize || function capitalize() {
+        return this.charAt(0).toUpperCase() + this.slice(1);
+    }
+
     function calculateAP() {
         var armor_ap = Object.values(bdo.equippedItems.armor).reduce(function(a,b) {
             return a + b.ap;
@@ -69,16 +73,19 @@
     bdo.loadItems = function loadItems() {
         // return some debug items
         return {
-            head: {grunil: { lvl1: {ap:0, dp:10}}},
-            armor: {grunil: { lvl1: {ap:0, dp:10}}},
-            gloves: {grunil: { lvl1: {ap:0, dp:10}}},
-            shoes: {grunil: { lvl1: {ap:0, dp:10}}},
-            ring1: {grunil: { lvl1: {ap:0, dp:10}}},
-            ring2: {grunil: { lvl1: {ap:0, dp:10}}},
-            earring1: {grunil: { lvl1: {ap:0, dp:10}}},
-            earring2: {grunil: { lvl1: {ap:0, dp:10}}},
-            neck: {grunil: { lvl1: {ap:0, dp:10}}},
-            waist: {grunil: { lvl1: {ap:0, dp:10}}},
+            head: {grunil: { lvl1: {name: null, img: null, ap:0, dp:10}}},
+            chest: {grunil: { lvl1: {name: 'grunil', img: null, ap:0, dp:10}}},
+            gloves: {grunil: { lvl1: {name: null, img: null, ap:0, dp:10}}},
+            shoes: {grunil: { lvl1: {name: null, img: null, ap:0, dp:10}}},
+            ring1: {grunil: { lvl1: {name: null, img: null, ap:0, dp:10}}},
+            ring2: {grunil: { lvl1: {name: null, img: null, ap:0, dp:10}}},
+            earring1: {grunil: { lvl1: {name: null, img: null, ap:0, dp:10}}},
+            earring2: {grunil: { lvl1: {name: null, img: null, ap:0, dp:10}}},
+            neck: {grunil: { lvl1: {name: null, img: null, ap:0, dp:10}}},
+            waist: {grunil: { lvl1: {name: null, img: null, ap:0, dp:10}}},
+            weapon: {liverto: { lvl1: {name: null, img: null, ap:10, dp:0}}},
+            offhand: {yuria: { lvl1: {name: null, img: null, ap:4, dp:0}}},
+            awaken: {default: { lvl1: {name: null, img: null, ap:10, dp:0}}},
         }
 
         return {
@@ -91,6 +98,20 @@
         }
     };
 
+    bdo.updateItems = function updateItems(items) {
+
+        var slots = ['head', 'chest'];
+        $.each(slots, function(i, slot) {
+            $.each(Object.keys(items[slot]), function (i, item) {
+                $(`select[name=${slot}]`).append($('<option>', {
+                    value: item,
+                    text : item.capitalize()
+                }));
+            });
+        });
+
+    }
+
     bdo.updateStats = function updateStats() {
         var $ap = document.querySelector('.stat-ap span');
         var $aap = document.querySelector('.stat-awaken-ap span');
@@ -102,7 +123,15 @@
     }
 
     bdo.equipItem = function equipItem(slot, name, level) {
-
+        if(slot in bdo.equippedItems.armor) {
+            bdo.equippedItems.armor[slot] = bdo.all_items[slot][name][`lvl${level}`];
+        } else if (slot in bdo.equippedItems.weapons) {
+            bdo.equippedItems.weapons[slot] = bdo.all_items[slot][name][`lvl${level}`];
+        } else if (slot in bdo.equippedItems.accessories) {
+            bdo.equippedItems.accessories[slot] = bdo.all_items[slot][name][`lvl${level}`];
+        }
+        console.log('Equipped item');
+        bdo.updateStats();
     }
 
     bdo.loadFitting = function loadFitting() {
@@ -111,16 +140,25 @@
     }
 
     /* Add event handlers */
-
+    // selecting a slot
     $('.character-items .slot').on('click', function() {
         var itemType = $(this).attr("class").split(' ')[1];
         itemType = itemType.substring(5)
         $('.character-equipment').children().hide();
         $(`.character-equipment .${itemType}`).show();
     });
+    // updating an item name
+    $('.character-equipment select').on('change', function() {
+        var slot = $(this).parent().attr('class');
+        var itemName = $(`.character-equipment select[name="${slot}"]`).find(":selected").val();
+        var itemLevel = $(`.character-equipment select[name="${slot}-level"]`).find(":selected").val();
+        console.log(slot, itemName, itemLevel);
+        bdo.equipItem(slot, itemName, itemLevel);
+    });
+    //updating an item level
 
-    var all_items = bdo.loadItems();
-
+    bdo.all_items = bdo.loadItems();
+    bdo.updateItems(bdo.all_items);
     bdo.loadFitting();
     bdo.updateStats();
     window.bdo = bdo;

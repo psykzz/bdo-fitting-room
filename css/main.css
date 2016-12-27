@@ -27,72 +27,71 @@ body {
 .character-items .slot {
     width: 45px;
     height: 45px;
-    background-color: grey;
 }
 
 .character-items .slot-head {
     position: absolute;
-    top: 14px;
-    left: 99px;
+    top: 22px;
+    left: 95px;
 }
 .character-items .slot-chest {
     position: absolute;
-    top: 14px;
-    left: 221px;
+    top: 22px;
+    left: 219px;
 }
 .character-items .slot-earring1 {
     position: absolute;
-    top: 55px;
+    top: 61px;
     left: 41px;
 }
 .character-items .slot-ring1 {
     position: absolute;
-    top: 55px;
+    top: 61px;
     left: 279px;
 }
 .character-items .slot-earring2 {
     position: absolute;
-    top: 115px;
+    top: 121px;
     left: 14px;
 }
 .character-items .slot-shoe {
     position: absolute;
-    top: 179px;
+    top: 185px;
     left: 11px;
 }
 .character-items .slot-ring2 {
     position: absolute;
-    top: 115px;
+    top: 121px;
     left: 306px;
 }
 .character-items .slot-gloves {
     position: absolute;
-    top: 179px;
+    top: 185px;
     left: 309px;
 }
 .character-items .slot-waist {
     position: absolute;
-    top: 241px;
+    top: 247px;
     left: 37px;
 }
 .character-items .slot-neck {
     position: absolute;
-    top: 241px;
+    top: 247px;
     left: 283px;
 }
 .character-items .slot-weapon {
     position: absolute;
-    top: 285px;
+    top: 291px;
     left: 90px;
 }
 .character-items .slot-offhand {
     position: absolute;
-    top: 285px;
+    top: 291px;
     left: 229px;
 }
 .character-items .slot-awaken {
     position: absolute;
-    top: 304px;
+    top: 310px;
     left: 160px;
 }
 
@@ -103,7 +102,8 @@ body {
 }
 
 .character-items i.item-none {
-    background-color: blue;
+    border: 1px solid white;
+    border-radius: 3px;
 }
 
 

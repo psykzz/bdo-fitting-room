@@ -35,9 +35,7 @@
         var accessories_ap = Object.values(bdo.equippedItems.accessories).reduce(function(a,b) {
             return a + b.ap;
         }, 0);
-        var weapon_ap = Object.values(bdo.equippedItems.weapons).reduce(function(a,b) {
-            return a + b.dp;
-        }, 0);
+        var weapon_ap = bdo.equippedItems.weapons.weapon.ap + bdo.equippedItems.weapons.offhand.ap;
         return armor_ap + accessories_ap + weapon_ap;
     }
 
@@ -66,6 +64,11 @@
     }
 
     /* public functions */
+    bdo.init = function init(callback) {
+        bdo.loadItems();
+        callback();
+    }
+
     bdo.loadItems = function loadItems() {
         // return some debug items
         console.log('hello?');
@@ -120,7 +123,7 @@
 
     }
 
-    bdo.updateStats = function updateStats() {
+    bdo.updateStats = function updateStats(firstLoad) {
         var $ap = document.querySelector('.stat-ap span');
         var $aap = document.querySelector('.stat-awaken-ap span');
         var $dp = document.querySelector('.stat-dp span');
@@ -128,15 +131,30 @@
         $ap.textContent = calculateAP();
         $aap.textContent = calculateAAP();
         $dp.textContent = calculateDP();
+
+        // update url hash
+        if (!firstLoad) {
+            var token = btoa(JSON.stringify(bdo.equippedItems));
+            history.pushState(null, null, `#${token}`);
+        }
     }
 
     bdo.equipItem = function equipItem(slot, name, level) {
         if(slot in bdo.equippedItems.armor) {
-            bdo.equippedItems.armor[slot] = bdo.all_items[slot][name][`lvl${level}`];
+            bdo.equippedItems.armor[slot].name = bdo.all_items[slot][name][`lvl${level}`].name;
+            bdo.equippedItems.armor[slot].img = bdo.all_items[slot][name][`lvl${level}`].img;
+            bdo.equippedItems.armor[slot].ap = bdo.all_items[slot][name][`lvl${level}`].ap;
+            bdo.equippedItems.armor[slot].dp = bdo.all_items[slot][name][`lvl${level}`].dp;
         } else if (slot in bdo.equippedItems.weapons) {
-            bdo.equippedItems.weapons[slot] = bdo.all_items[slot][name][`lvl${level}`];
+            bdo.equippedItems.weapons[slot].name = bdo.all_items[slot][name][`lvl${level}`].name;
+            bdo.equippedItems.weapons[slot].img = bdo.all_items[slot][name][`lvl${level}`].img;
+            bdo.equippedItems.weapons[slot].ap = bdo.all_items[slot][name][`lvl${level}`].ap;
+            bdo.equippedItems.weapons[slot].dp = bdo.all_items[slot][name][`lvl${level}`].dp;
         } else if (slot in bdo.equippedItems.accessories) {
-            bdo.equippedItems.accessories[slot] = bdo.all_items[slot][name][`lvl${level}`];
+            bdo.equippedItems.accessories[slot].name = bdo.all_items[slot][name][`lvl${level}`].name;
+            bdo.equippedItems.accessories[slot].img = bdo.all_items[slot][name][`lvl${level}`].img;
+            bdo.equippedItems.accessories[slot].ap = bdo.all_items[slot][name][`lvl${level}`].ap;
+            bdo.equippedItems.accessories[slot].dp = bdo.all_items[slot][name][`lvl${level}`].dp;
         }
         console.log('Equipped item');
         bdo.updateStats();
@@ -144,7 +162,13 @@
 
     bdo.loadFitting = function loadFitting() {
         var fittingHash = window.location.hash;
+        if (!fittingHash) {
+            return;
+        }
         console.log(`Fitting Hash: ${fittingHash}`);
+        bdo.equippedItems = JSON.parse(atob(fittingHash.substring(1)));
+
+        // TODO: Update selectors to use the currently selected item (or to reset if the item is not available anymore...)
     }
 
     /* Add event handlers */
@@ -165,14 +189,17 @@
         try {
             bdo.equipItem(slot, itemName, itemLevel);
         } catch(err) {
+            console.error(err);
             setTimeout(function() { alert('Invalid selection, data might be missing'); }, 1);
         }
     });
 
     /* start init */
-    bdo.loadItems();
-    bdo.loadFitting();
-    bdo.updateStats();
+    bdo.init(function() {
+        bdo.loadFitting();
+        bdo.updateStats(true);
+    })
+
     window.bdo = bdo;
 
 })(window, document, jQuery)

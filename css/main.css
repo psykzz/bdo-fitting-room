@@ -1,1 +1,135 @@
+* {
+    margin: 0;
+    padding: 0;
+}
 
+body {
+    width: 100%;
+}
+.container {
+    margin: 0 auto;
+    width:1024px;
+}
+.character-panel {
+    position: absolute;
+    width: 360px;
+    height: 480px;
+}
+.character-items .background {
+    position: absolute;
+    top:0;
+    bottom:0;
+    left: 0;
+    right: 0;
+    background-image: url('../images/character-panel-bg.png') ;
+}
+.character-items .slot {
+    width: 45px;
+    height: 45px;
+    background-color: grey;
+}
+
+.character-items .slot-head {
+    position: absolute;
+    top: 14px;
+    left: 99px;
+}
+.character-items .slot-chest {
+    position: absolute;
+    top: 14px;
+    left: 221px;
+}
+.character-items .slot-earring1 {
+    position: absolute;
+    top: 55px;
+    left: 41px;
+}
+.character-items .slot-ring1 {
+    position: absolute;
+    top: 55px;
+    left: 279px;
+}
+.character-items .slot-earring2 {
+    position: absolute;
+    top: 115px;
+    left: 14px;
+}
+.character-items .slot-shoe {
+    position: absolute;
+    top: 179px;
+    left: 11px;
+}
+.character-items .slot-ring2 {
+    position: absolute;
+    top: 115px;
+    left: 306px;
+}
+.character-items .slot-gloves {
+    position: absolute;
+    top: 179px;
+    left: 309px;
+}
+.character-items .slot-waist {
+    position: absolute;
+    top: 241px;
+    left: 37px;
+}
+.character-items .slot-neck {
+    position: absolute;
+    top: 241px;
+    left: 283px;
+}
+.character-items .slot-main {
+    position: absolute;
+    top: 285px;
+    left: 90px;
+}
+.character-items .slot-offhand {
+    position: absolute;
+    top: 285px;
+    left: 229px;
+}
+.character-items .slot-awaken {
+    position: absolute;
+    top: 304px;
+    left: 160px;
+}
+
+.character-items i {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.character-items i.item-none {
+    background-color: blue;
+}
+
+
+.character-stats {
+    position: absolute;
+
+    top: 425px;
+    color: gold;
+    font-weight: bolder;
+    font-size: 3em;
+    width: 100%;
+    height: 100px;
+}
+.character-stats .stat {
+    display: inline;
+    width: 100px;
+    text-align: center;
+}
+.character-stats .stat-ap {
+    position: absolute;
+    left: 0px;
+}
+.character-stats .stat-awaken-ap {
+    position: absolute;
+    left: 140px;
+}
+.character-stats .stat-dp {
+    position: absolute;
+    left: 270px;
+}
